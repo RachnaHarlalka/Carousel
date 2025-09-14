@@ -2,7 +2,7 @@
 // features should be support for both vertical and horizontal view, loop,
 // auto play, on demand play, should stop auto play when mouse is hovered over any image
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface IProps {
   images: string[];
@@ -15,10 +15,10 @@ interface IProps {
   containerHeight?: number;
 }
 const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, autoPlay, autoPlayInterval }: IProps) => {
+  console.log({ autoPlay });
   //states
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [play, setPlay] = useState(false);
-  const [onDemandPlay, setOnDemandPlay] = useState(autoPlay || play || false);
+  const [onDemandPlay, setOnDemandPlay] = useState(autoPlay || false);
 
   //const
   const carouselWidth = containerWidth || 320;
@@ -43,7 +43,7 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
 
   function handlePlayButton() {
     console.log('clicked');
-    setPlay((prev) => !prev);
+    setOnDemandPlay((prev) => !prev);
   }
 
   function handleMouseOver() {
@@ -52,7 +52,7 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
   }
 
   function handleMouseLeave() {
-    if (play || autoPlay) {
+    if (autoPlay) {
       setOnDemandPlay(true);
     }
   }
@@ -64,6 +64,7 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
     console.log('inside useeffect');
     let timeOutId: number;
     if (onDemandPlay) {
+      console.log('inside iff');
       timeOutId = setTimeout(() => {
         console.log('isnide tiner');
         handleNext();
@@ -72,13 +73,7 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
     return () => {
       clearTimeout(timeOutId);
     };
-  }, [autoPlayInterval, currentIndex, onDemandPlay]);
-
-  useEffect(() => {
-    setOnDemandPlay(play);
-  }, [play]);
-
-  const date = new Date().toUTCString();
+  }, [currentIndex, onDemandPlay]);
 
   return (
     <div className="flex flex-col gap-4  ">
@@ -99,9 +94,9 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
             }`
           }}
         >
-          {images.map((image) => (
+          {images.map((image, idx) => (
             <img
-              key={image + date}
+              key={`carousel-image-${idx}`}
               src={image}
               height={40}
               width={40}
@@ -117,19 +112,21 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
           ))}
         </div>
       </div>
-      <div className={`flex ${vertical ? 'flex-col items-start ' : 'flex-row'}  gap-5`}>
-        <button className="cursor-pointer outline-1 px-3 py-1  bg-blue-950 text-white " onClick={handlePrev}>
-          {vertical ? `^` : '<'}
-        </button>
-        <button className="cursor-pointer outline-1 px-3 py-1  bg-blue-950 text-white " onClick={handleNext}>
-          {vertical ? `v` : '>'}
-        </button>
+      <div className={`gap-5 flex items-center justify-between`}>
+        <div className={`flex ${vertical ? 'flex-col items-start ' : 'flex-row'}  gap-5`}>
+          <button className="cursor-pointer outline-1 px-3 py-1  bg-blue-950 text-white " onClick={handlePrev}>
+            {vertical ? `^` : '<'}
+          </button>
+          <button className="cursor-pointer outline-1 px-3 py-1  bg-blue-950 text-white " onClick={handleNext}>
+            {vertical ? `v` : '>'}
+          </button>
+        </div>
         {!autoPlay && (
           <button
             className="cursor-pointer w-1/4 outline-1 px-3 py-1 rounded-md bg-blue-950 text-white"
             onClick={handlePlayButton}
           >
-            {play ? ' Stop' : '  Start'}
+            {onDemandPlay ? ' Stop' : '  Start'}
           </button>
         )}
       </div>

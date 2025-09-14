@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Carousel from './components/Carousel';
 
 // build a image carousel component with animation for switching images
@@ -16,9 +17,26 @@ function App() {
     'https://media.istockphoto.com/id/1136900682/photo/calm-and-angry-girl-double-color-exposure.jpg?s=612x612&w=0&k=20&c=BKofsaR0tGlvossjYlNoxz1Fl16xBVnDDvj6FINy6Oo='
   ];
 
+  const [customisation, setCustomisation] = useState({
+    vertical: false,
+    autoplay: false
+  });
+
   return (
-    <div className="flex justify-center m-10">
-      <Carousel images={images} loop />
+    <div className="flex gap-4 items-center w-full">
+      <div className="flex justify-center m-10">
+        <Carousel images={images} loop vertical={customisation.vertical} autoPlay />
+      </div>
+      <div className="flex flex-col gap-2">
+        <button
+          className="cursor-pointer outline-1 px-3 py-1 rounded-md bg-blue-950 text-white"
+          onClick={() => {
+            setCustomisation((prev) => ({ ...prev, vertical: !prev.vertical }));
+          }}
+        >
+          {customisation.vertical ? 'Horizonal' : 'Vertical'}
+        </button>
+      </div>
     </div>
   );
 }
