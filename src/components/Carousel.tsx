@@ -2,7 +2,7 @@
 // features should be support for both vertical and horizontal view, loop,
 // auto play, on demand play, should stop auto play when mouse is hovered over any image
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface IProps {
   images: string[];
@@ -19,6 +19,8 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
   //states
   const [currentIndex, setCurrentIndex] = useState(0);
   const [onDemandPlay, setOnDemandPlay] = useState(autoPlay || false);
+
+  const wasAutoPlayingBeforHover = useRef<boolean | null>(null);
 
   //const
   const carouselWidth = containerWidth || 320;
@@ -48,11 +50,12 @@ const Carousel = ({ images, containerWidth, loop, vertical, containerHeight, aut
 
   function handleMouseOver() {
     console.log('inside mouseOver');
+    wasAutoPlayingBeforHover.current = onDemandPlay;
     onDemandPlay && setOnDemandPlay(false);
   }
 
   function handleMouseLeave() {
-    if (autoPlay) {
+    if (wasAutoPlayingBeforHover.current) {
       setOnDemandPlay(true);
     }
   }
