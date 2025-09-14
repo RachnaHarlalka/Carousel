@@ -25,7 +25,7 @@ function App() {
   return (
     <div className="flex gap-4 items-center w-full">
       <div className="flex justify-center m-10">
-        <Carousel images={images} loop vertical={customisation.vertical} autoPlay />
+        <Carousel images={images} loop vertical={customisation.vertical} />
       </div>
       <div className="flex flex-col gap-2">
         <button
